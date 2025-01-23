@@ -30,7 +30,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 champ::PhaseGenerator::Time rosTimeToChampTime(const rclcpp::Time& time)
 {
-  return time.nanoseconds() / 1000ul;
+    // RCLCPP_INFO(rclcpp::get_logger("QuadrupedController"), "Converting ROS time to CHAMP time");
+
+    return time.nanoseconds() / 1000ul;
 }
 
 QuadrupedController::QuadrupedController():
@@ -42,6 +44,8 @@ QuadrupedController::QuadrupedController():
     leg_controller_(base_, rosTimeToChampTime(clock_.now())),
     kinematics_(base_)
 {
+    RCLCPP_INFO(this->get_logger(), "Initializing QuadrupedController node...");
+
     std::string joint_control_topic = "joint_group_position_controller/command";
     std::string knee_orientation;
     std::string urdf = "";
@@ -65,37 +69,52 @@ QuadrupedController::QuadrupedController():
     this->get_parameter("joint_controller_topic",      joint_control_topic);
     this->get_parameter("loop_rate",                   loop_rate);
     this->get_parameter("urdf",                        urdf);
-    
+
+    RCLCPP_INFO(this->get_logger(), "Setting up subscriptions and publishers...");
+
     cmd_vel_subscription_ = this->create_subscription<geometry_msgs::msg::Twist>(
         "cmd_vel/smooth", 10, std::bind(&QuadrupedController::cmdVelCallback_, this,  std::placeholders::_1));
     cmd_pose_subscription_ = this->create_subscription<geometry_msgs::msg::Pose>(
         "body_pose", 1,  std::bind(&QuadrupedController::cmdPoseCallback_, this,  std::placeholders::_1));
-    
+
     if(publish_joint_control_)
     {
+        RCLCPP_INFO(this->get_logger(), "Publishing joint control enabled.");
         joint_commands_publisher_ = this->create_publisher<trajectory_msgs::msg::JointTrajectory>(joint_control_topic, 10);
     }
 
     if(publish_joint_states_ && !in_gazebo_)
     {
+        RCLCPP_INFO(this->get_logger(), "Publishing joint states enabled.");
         joint_states_publisher_ = this->create_publisher<sensor_msgs::msg::JointState>("joint_states", 10);
     }
 
     if(publish_foot_contacts_ && !in_gazebo_)
     {
+        RCLCPP_INFO(this->get_logger(), "Publishing foot contacts enabled.");
         foot_contacts_publisher_   = this->create_publisher<champ_msgs::msg::ContactsStamped>("foot_contacts", 10);
     }
 
     gait_config_.knee_orientation = knee_orientation.c_str();
-    
+
+    RCLCPP_INFO(this->get_logger(), "Setting gait configuration...");
     base_.setGaitConfig(gait_config_);
+
+    RCLCPP_INFO(this->get_logger(), "Loading URDF...");
     champ::URDF::loadFromString(base_, this->get_node_parameters_interface(), urdf);
+    RCLCPP_INFO(this->get_logger(), "URDF loaded successfully");
+
     joint_names_ = champ::URDF::getJointNames(this->get_node_parameters_interface());
+    RCLCPP_INFO(this->get_logger(), "Joint names loaded successfully");
+
     std::chrono::milliseconds period(static_cast<int>(1000/loop_rate));
 
     loop_timer_ = this->create_wall_timer(
          std::chrono::duration_cast<std::chrono::milliseconds>(period), std::bind(&QuadrupedController::controlLoop_, this));
+
     req_pose_.position.z = gait_config_.nominal_height;
+
+    RCLCPP_INFO(this->get_logger(), "QuadrupedController node initialized successfully.");
 }
 
 void QuadrupedController::controlLoop_()

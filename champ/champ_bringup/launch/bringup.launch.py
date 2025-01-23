@@ -34,7 +34,7 @@ def generate_launch_description():
     links_config = os.path.join(config_pkg_share, "config/links/links.yaml")
 
     default_rviz_path = os.path.join(descr_pkg_share, "rviz/urdf_viewer.rviz")
-    default_model_path = os.path.join(descr_pkg_share, "urdf/X30.urdf")
+    default_model_path = os.path.join(descr_pkg_share, "urdf/X30.urdf.xacro")
 
     declare_use_sim_time = DeclareLaunchArgument(
         "use_sim_time",
@@ -165,7 +165,7 @@ def generate_launch_description():
             {"publish_joint_control": LaunchConfiguration("publish_joint_control")},
             {"publish_foot_contacts": LaunchConfiguration("publish_foot_contacts")},
             {"joint_controller_topic": LaunchConfiguration("joint_controller_topic")},
-            {"urdf": open(default_model_path, 'r').read()},
+            {"urdf": Command(['xacro ', LaunchConfiguration('description_path')])},
             LaunchConfiguration('joints_map_path'),
             LaunchConfiguration('links_map_path'),
             LaunchConfiguration('gait_config_path'),
@@ -173,19 +173,19 @@ def generate_launch_description():
         remappings=[("/cmd_vel/smooth", "/cmd_vel")],
     )
 
-    state_estimator_node = Node(
-        package="champ_base",
-        executable="state_estimation_node",
-        output="screen",
-        parameters=[
-            {"use_sim_time": LaunchConfiguration("use_sim_time")},
-            {"orientation_from_imu": LaunchConfiguration("orientation_from_imu")},
-            {"urdf": open(default_model_path, 'r').read()},
-            LaunchConfiguration('joints_map_path'),
-            LaunchConfiguration('links_map_path'),
-            LaunchConfiguration('gait_config_path'),
-        ],
-    )
+    # state_estimator_node = Node(
+    #     package="champ_base",
+    #     executable="state_estimation_node",
+    #     output="screen",
+    #     parameters=[
+    #         {"use_sim_time": LaunchConfiguration("use_sim_time")},
+    #         {"orientation_from_imu": LaunchConfiguration("orientation_from_imu")},
+    #         {"urdf": Command(['xacro ', LaunchConfiguration('description_path')])},
+    #         LaunchConfiguration('joints_map_path'),
+    #         LaunchConfiguration('links_map_path'),
+    #         LaunchConfiguration('gait_config_path'),
+    #     ],
+    # )
 
     base_to_footprint_ekf = Node(
         package="robot_localization",
@@ -257,7 +257,7 @@ def generate_launch_description():
             declare_close_loop_odom,
             description_ld,
             quadruped_controller_node,
-            state_estimator_node,
+            # state_estimator_node,
             base_to_footprint_ekf,
             footprint_to_odom_ekf,
             rviz2

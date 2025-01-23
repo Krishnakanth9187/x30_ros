@@ -62,34 +62,93 @@ namespace champ
 
         void fillLeg(champ::QuadrupedLeg *leg, const rclcpp::node_interfaces::NodeParametersInterface::SharedPtr nh, urdf::Model &model, std::string links_map)
         {
-            rclcpp::Parameter links_param_("links_param", std::vector<std::string> ({}));
-            auto success = nh->get_parameter(links_map, links_param_);
-            if (!success){
-                throw std::runtime_error("No links config file provided");
-            }
+            try
+            {
+                // Initialize parameter and logging
+                rclcpp::Parameter links_param_("links_param", std::vector<std::string>({}));
+                RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Starting fillLeg function");
 
-            std::vector<std::string> links_param = links_param_.as_string_array();
-
-            for (int i = 3; i > -1; i--){
-                std::string ref_link, end_link;
-                if (i>0){
-                    ref_link = links_param[i-1];
-                }else {
-                    ref_link = model.getRoot()->name;
+                // Fetch the parameter
+                RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Fetching parameter: %s", links_map.c_str());
+                auto success = nh->get_parameter(links_map, links_param_);
+                if (!success)
+                {
+                    RCLCPP_ERROR(rclcpp::get_logger("rclcpp"), "Parameter '%s' not found", links_map.c_str());
+                    throw std::runtime_error("No links config file provided");
                 }
 
-                end_link = links_param[i];
-                urdf::Pose pose;
-                getPose(&pose, ref_link, end_link, model);
-                double x,y,z;
-                x = pose.position.x;
-                y = pose.position.y;
-                z = pose.position.z;
-                
-                leg->joint_chain[i]->setTranslation(x,y,z);
-            }
+                // Convert and log parameter value
+                std::vector<std::string> links_param = links_param_.as_string_array();
+                std::ostringstream links_param_str;
+                for (const auto &link : links_param)
+                {
+                    links_param_str << link << " ";
+                }
+                RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Links parameter: %s", links_param_str.str().c_str());
 
+                // Loop through the links
+                for (int i = 3; i > -1; i--)
+                {
+                    RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Processing index: %d", i);
+
+                    std::string ref_link, end_link;
+                    if (i > 0)
+                    {
+                        ref_link = links_param[i - 1];
+                    }
+                    else
+                    {
+                        if (model.getRoot() == nullptr)
+                        {
+                            RCLCPP_ERROR(rclcpp::get_logger("rclcpp"), "URDF model root is null.");
+                            throw std::runtime_error("Invalid URDF model root");
+                        }
+                        ref_link = model.getRoot()->name;
+                    }
+                    end_link = links_param[i];
+
+                    RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Reference link: %s, End link: %s", ref_link.c_str(), end_link.c_str());
+
+                    urdf::Pose pose;
+                    getPose(&pose, ref_link, end_link, model);
+                    RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Pose obtained: x=%.3f, y=%.3f, z=%.3f", pose.position.x, pose.position.y, pose.position.z);
+
+                    // Ensure joint_chain[i] is valid
+                    if (leg->joint_chain[i] == nullptr)
+                    {
+                        RCLCPP_ERROR(rclcpp::get_logger("rclcpp"), "Joint chain at index %d is null", i);
+                        throw std::runtime_error("Invalid joint chain");
+                    }
+
+                    // Set the translation values
+                    double x = pose.position.x;
+                    double y = pose.position.y;
+                    double z = pose.position.z;
+                    RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Setting translation: x=%.3f, y=%.3f, z=%.3f", x, y, z);
+                    leg->joint_chain[i]->setTranslation(x, y, z);
+                }
+
+                RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "fillLeg function completed successfully.");
+            }
+            catch (const std::runtime_error &e)
+            {
+                RCLCPP_ERROR(rclcpp::get_logger("rclcpp"), "Runtime error: %s", e.what());
+                throw; // Re-throw if you want the caller to handle it further
+            }
+            catch (const std::exception &e)
+            {
+                RCLCPP_ERROR(rclcpp::get_logger("rclcpp"), "Exception occurred: %s", e.what());
+                throw; // Re-throw for further handling if necessary
+            }
+            catch (...)
+            {
+                RCLCPP_ERROR(rclcpp::get_logger("rclcpp"), "An unknown error occurred in fillLeg.");
+                throw; // Re-throw the unknown exception
+            }
         }
+
+
+
 
         void loadFromFile(champ::QuadrupedBase &base, const rclcpp::node_interfaces::NodeParametersInterface::SharedPtr nh, const std::string& urdf_filepath)
         {
@@ -115,25 +174,40 @@ namespace champ
 
         void loadFromString(champ::QuadrupedBase &base, const rclcpp::node_interfaces::NodeParametersInterface::SharedPtr nh, const std::string& urdf_string)
         {
-            urdf::Model model;
-            // TODO fix temp path
-            if (!model.initString(urdf_string)){
-                 RCLCPP_ERROR(rclcpp::get_logger("rclcpp"), "Failed to parse urdf string");
-            } 
-            
-            RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Successfully parsed urdf file");
-            std::vector<std::string> links_map;
-
-            links_map.push_back("links_map.left_front");
-            links_map.push_back("links_map.right_front");
-            links_map.push_back("links_map.left_hind");
-            links_map.push_back("links_map.right_hind");
-            
-            for(int i = 0; i < 4; i++)
+            try
             {
-                fillLeg(base.legs[i], nh, model, links_map[i]);
+                urdf::Model model;
+
+                // Parse the URDF string
+                if (!model.initString(urdf_string))
+                {
+                    RCLCPP_ERROR(rclcpp::get_logger("rclcpp"), "Failed to parse URDF string");
+                    return;
+                }
+
+                RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Successfully parsed URDF file");
+
+                std::vector<std::string> links_map;
+
+                links_map.push_back("links_map.left_front");
+                links_map.push_back("links_map.right_front");
+                links_map.push_back("links_map.left_hind");
+                links_map.push_back("links_map.right_hind");
+                for (int i = 0; i < 4; i++)
+                {
+                    fillLeg(base.legs[i], nh, model, links_map[i]);
+                }
+            }
+            catch (const std::exception &e)
+            {
+                RCLCPP_ERROR(rclcpp::get_logger("rclcpp"), "Exception occurred: %s", e.what());
+            }
+            catch (...)
+            {
+                RCLCPP_ERROR(rclcpp::get_logger("rclcpp"), "Unknown exception occurred while loading from string.");
             }
         }
+
 
         std::vector<std::string> getJointNames(const rclcpp::node_interfaces::NodeParametersInterface::SharedPtr nh)
         {

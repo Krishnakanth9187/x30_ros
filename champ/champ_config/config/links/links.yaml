@@ -1,27 +1,30 @@
+---
 /**:
   ros__parameters:
     links_map:
-      base: base_link
+      base: TORSO
       left_front:
-        - lf_hip_link
-        - lf_upper_leg_link
-        - lf_lower_leg_link
-        - lf_foot_link
-        
+        - FL_HIP
+        - FL_THIGH
+        - FL_SHANK
+        - FL_FOOT
+
       right_front:
-        - rf_hip_link
-        - rf_upper_leg_link
-        - rf_lower_leg_link
-        - rf_foot_link
+        - FR_HIP
+        - FR_THIGH
+        - FR_SHANK
+        - FR_FOOT
 
       left_hind:
-        - lh_hip_link
-        - lh_upper_leg_link
-        - lh_lower_leg_link
-        - lh_foot_link
+        - HL_HIP
+        - HL_THIGH
+        - HL_SHANK
+        - HL_FOOT
 
       right_hind:
-        - rh_hip_link
-        - rh_upper_leg_link
-        - rh_lower_leg_link
-        - rh_foot_link
+        - HR_HIP
+        - HR_THIGH
+        - HR_SHANK
+        - HR_FOOT
+
+

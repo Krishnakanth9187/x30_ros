@@ -51,7 +51,7 @@ def generate_launch_description():
     )
 
     pkg_share = launch_ros.substitutions.FindPackageShare(package="champ_description").find("champ_description")
-    default_model_path = os.path.join(pkg_share, "urdf/X30.urdf")
+    default_model_path = os.path.join(pkg_share, "urdf/X30.urdf.xacro")
 
     declare_description_path = DeclareLaunchArgument(name="description_path", default_value=default_model_path, description="Absolute path to robot urdf file")
 
@@ -117,17 +117,17 @@ def generate_launch_description():
     # TODO as for right now, running contact sensor results in RTF being reduced by factor of 2x.
     # So it needs to be fixed before using that. Unsure what it does actually because even without it
     # Champ seems to be all right
-    # contact_sensor = Node(
-    #     package="champ_gazebo",
-    #     executable="contact_sensor",
-    #     output="screen",
-    #     parameters=[{"use_sim_time": LaunchConfiguration("use_sim_time")},links_config],
-    #     # prefix=['xterm -e gdb -ex run --args'],
-    # )
+    contact_sensor = Node(
+        package="champ_gazebo",
+        executable="contact_sensor",
+        output="screen",
+        parameters=[{"use_sim_time": LaunchConfiguration("use_sim_time")},links_config],
+        # prefix=['xterm -e gdb -ex run --args'],
+    )
 
-    # robot_description = {"robot_description": Command(["xacro ", LaunchConfiguration("description_path")])}
+    robot_description = {"robot_description": Command(["xacro ", LaunchConfiguration("description_path")])}
 
-
+    print(f"hiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii")
     load_joint_state_controller = ExecuteProcess(
         cmd=['ros2', 'control', 'load_controller', '--set-state', 'active',
              'joint_states_controller'],
@@ -144,7 +144,7 @@ def generate_launch_description():
              'joint_group_effort_controller'],
         output='screen'
     )
-
+    print(f"hiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii")
     # joint_group_position_controller
     return LaunchDescription(
         [
@@ -167,6 +167,6 @@ def generate_launch_description():
             load_joint_state_controller,
             # load_joint_trajectory_position_controller
             load_joint_trajectory_effort_controller,
-            # contact_sensor
+            contact_sensor
         ]
     )

@@ -33,7 +33,7 @@ def generate_launch_description():
     )
     gait_config = os.path.join(config_pkg_share, "config/gait/gait.yaml")
     links_config = os.path.join(config_pkg_share, "config/links/links.yaml")
-    default_model_path = os.path.join(descr_pkg_share, "urdf/X30.urdf")
+    default_model_path = os.path.join(descr_pkg_share, "urdf/X30.urdf.xacro")
     default_world_path = os.path.join(config_pkg_share, "worlds/outdoor.world")
 
     declare_use_sim_time = DeclareLaunchArgument(

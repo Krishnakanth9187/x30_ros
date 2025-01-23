@@ -1,0 +1,57 @@
+controller_manager:
+  ros__parameters:
+    use_sim_time: True
+    update_rate: 250  # Hz
+
+    joint_states_controller:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+    joint_group_effort_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+joint_group_effort_controller:
+  ros__parameters:
+    use_sim_time: True
+    joints:
+        - FL_HipX_joint
+        - FL_HipY_joint
+        - FL_Knee_joint
+        - FL_Ankle
+        - FR_HipX_joint
+        - FR_HipY_joint
+        - FR_Knee_joint
+        - FR_Ankle
+        - HL_HipX_joint
+        - HL_HipY_joint
+        - HL_Knee_joint
+        - HL_Ankle
+        - HR_HipX_joint
+        - HR_HipY_joint
+        - HR_Knee_joint
+        - HR_Ankle
+    command_interfaces:
+      - effort
+    state_interfaces:
+      - position
+      - velocity
+    
+    gains:
+      FL_HipX_joint        : {p: 100.0, i: 0.2, d: 1.0, i_clamp: 2.5}
+      FL_HipY_joint        : {p: 100.0, i: 0.2, d: 1.0, i_clamp: 2.5}
+      FL_Knee_joint        : {p: 100.0, i: 0.2, d: 1.0, i_clamp: 2.5}
+      FL_Ankle             : {p: 100.0, i: 0.2, d: 1.0, i_clamp: 2.5}
+      FR_HipX_joint        : {p: 100.0, i: 0.2, d: 1.0, i_clamp: 2.5}
+      FR_HipY_joint        : {p: 100.0, i: 0.2, d: 1.0, i_clamp: 2.5}
+      FR_Knee_joint        : {p: 100.0, i: 0.2, d: 1.0, i_clamp: 2.5}
+      FR_Ankle             : {p: 100.0, i: 0.2, d: 1.0, i_clamp: 2.5}
+      HL_HipX_joint        : {p: 100.0, i: 0.2, d: 1.0, i_clamp: 2.5}
+      HL_HipY_joint        : {p: 100.0, i: 0.2, d: 1.0, i_clamp: 2.5}
+      HL_Knee_joint        : {p: 100.0, i: 0.2, d: 1.0, i_clamp: 2.5}
+      HL_Ankle             : {p: 100.0, i: 0.2, d: 1.0, i_clamp: 2.5}
+      HR_HipX_joint        : {p: 100.0, i: 0.2, d: 1.0, i_clamp: 2.5}
+      HR_HipY_joint        : {p: 100.0, i: 0.2, d: 1.0, i_clamp: 2.5}
+      HR_Knee_joint        : {p: 100.0, i: 0.2, d: 1.0, i_clamp: 2.5}
+      HR_Ankle             : {p: 100.0, i: 0.2, d: 1.0, i_clamp: 2.5}
+      
+
+
