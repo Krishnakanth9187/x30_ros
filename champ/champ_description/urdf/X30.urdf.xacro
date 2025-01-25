@@ -7,6 +7,9 @@
       <inertia ixx="1e-12" ixy="0" ixz="0" iyy="1e-12" iyz="0" izz="1e-12" />
     </inertial>
   </link> -->
+  <xacro:include filename="$(find realsense2_description)/urdf/_d435.urdf.xacro" />
+
+  
 
   <link name="TORSO">
     <inertial>
@@ -27,6 +30,12 @@
       </geometry>
     </collision>
   </link>
+
+  <xacro:sensor_d435 
+    parent="TORSO" 
+    name="d435_camera" >
+    <origin xyz="0.1 0 0.2" rpy="0 0 0"/>
+  </xacro:sensor_d435>
 
   <!-- <joint name="base_joint" type="fixed">
     <parent link="base_link" />
@@ -662,7 +671,7 @@
         <namespace>/demo</namespace>
         <argument>odom:=odom/ground_truth</argument>
       </ros>
-      <body_name>base_link</body_name>
+      <body_name>TORSO</body_name>
       <frame_name>world</frame_name>
       <update_rate>10.0</update_rate>
       <xyz_offset>0 0 0</xyz_offset>
@@ -675,5 +684,7 @@
       <parameters>$(find champ_gazebo)/config/ros_control.yaml</parameters>
     </plugin>
   </gazebo>
+
+
 
 </robot>
