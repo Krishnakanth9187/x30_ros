@@ -8,6 +8,8 @@
     </inertial>
   </link> -->
   <xacro:include filename="$(find realsense2_description)/urdf/_d435.urdf.xacro" />
+  <xacro:include filename="$(find champ_description)/urdf/imu.urdf.xacro"/>
+
 
   
 
@@ -31,10 +33,18 @@
     </collision>
   </link>
 
-  <xacro:sensor_d435 
-    parent="TORSO" 
-    name="d435_camera" >
-    <origin xyz="0.1 0 0.2" rpy="0 0 0"/>
+  <xacro:imu_sensor xyz="0.0 0.0 0.09" rpy="0 0 0" parent="TORSO" />
+
+
+  <xacro:sensor_d435
+    parent="TORSO"
+    name="camera"
+    use_nominal_extrinsics="false"
+    add_plug="false"
+    use_mesh="true"
+    topics_ns="camera"
+    publish_pointcloud="true">
+  <origin xyz="0.4 0 0.12" rpy="0 0 0"/>
   </xacro:sensor_d435>
 
   <!-- <joint name="base_joint" type="fixed">

@@ -127,7 +127,6 @@ def generate_launch_description():
 
     robot_description = {"robot_description": Command(["xacro ", LaunchConfiguration("description_path")])}
 
-    print(f"hiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii")
     load_joint_state_controller = ExecuteProcess(
         cmd=['ros2', 'control', 'load_controller', '--set-state', 'active',
              'joint_states_controller'],
@@ -144,7 +143,7 @@ def generate_launch_description():
              'joint_group_effort_controller'],
         output='screen'
     )
-    print(f"hiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii")
+    
     # joint_group_position_controller
     return LaunchDescription(
         [
