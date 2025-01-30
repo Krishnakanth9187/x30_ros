@@ -1,0 +1,62 @@
+version: '3.8'
+
+networks:
+  ros_network:
+    driver: bridge
+
+services:
+  strider_x30:
+    image: strider_x30
+    container_name: strider_x30
+    networks:
+      - ros_network
+    environment:
+      - DISPLAY=${DISPLAY}
+      - GAZEBO_ALSA_DEVICE=plughw:1,0
+      - GAZEBO_AUDIO=true
+      - PULSE_SERVER=unix:/run/user/${UID}/pulse/native
+      - ROS_DOMAIN_ID=0  
+      - RMW_IMPLEMENTATION=rmw_fastrtps_cpp  
+      - ROS_LOCALHOST_ONLY=0  
+      - _NV_PRIME_RENDER_OFFLOAD=1
+      - __GLX_VENDOR_LIBRARY_NAME=nvidia
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - /run/user/${UID}/pulse/native:/run/user/${UID}/pulse/native
+      - /dev/dri:/dev/dri
+      - /dev/snd:/dev/snd
+      - /usr/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu
+      - /usr/lib64:/usr/lib64
+    devices:
+      - "/dev/dri/card1"
+      - "/dev/dri/renderD128"
+      - "/dev/snd"
+    stdin_open: true
+    tty: true
+    privileged: true
+
+  strider_slam:
+    container_name: strider_slam-container
+    image: strider_cuvslam:latest
+    networks:
+      - ros_network
+    environment:
+      - DISPLAY=${DISPLAY}
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=all
+      - ROS_DOMAIN_ID=0  
+      - RMW_IMPLEMENTATION=rmw_fastrtps_cpp  
+      - ROS_LOCALHOST_ONLY=0 
+      - USER=${USER}
+      - ISAAC_ROS_WS=/workspaces/isaac_ros-dev
+      - HOST_USER_UID=1000
+      - HOST_USER_GID=1000
+    volumes:
+      - .:/workspaces/isaac_ros-dev
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - $HOME/.Xauthority:/home/admin/.Xauthority:rw
+      - /etc/localtime:/etc/localtime:ro
+    ipc: "host"
+    privileged: true
+    runtime: nvidia
+
