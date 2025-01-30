@@ -42,7 +42,7 @@ def generate_launch_description():
         name='rviz2',
         output='screen',
         arguments=['-d', rviz_config_dir],
-        parameters=[{'use_sim_time': False}]
+        parameters=[{'use_sim_time': True}]
         )
     model_node = Node(
         name='model_node',

@@ -99,9 +99,9 @@ class ChampOdometry:
         )
 
     def get_foot_position(self, leg_id):
-        if self.tf.frameExists("base_link" and self.foot_links[leg_id]) :
-            t = self.tf.getLatestCommonTime("base_link", self.foot_links[leg_id])
-            position, quaternion = self.tf.lookupTransform("base_link", self.foot_links[leg_id], t)
+        if self.tf.frameExists("TORSO" and self.foot_links[leg_id]) :
+            t = self.tf.getLatestCommonTime("TORSO", self.foot_links[leg_id])
+            position, quaternion = self.tf.lookupTransform("TORSO", self.foot_links[leg_id], t)
             return position
         else:
             return 0, 0, 0

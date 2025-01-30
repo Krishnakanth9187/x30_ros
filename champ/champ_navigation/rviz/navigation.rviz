@@ -77,7 +77,7 @@ Visualization Manager:
         All Enabled: false
         base_footprint:
           Value: true
-        base_link:
+        TORSO:
           Value: false
         camera_link:
           Value: false
@@ -106,7 +106,7 @@ Visualization Manager:
         map:
           odom:
             base_footprint:
-              base_link:
+              TORSO:
                 camera_link:
                   {}
                 imu_link:
@@ -538,7 +538,7 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-        base_link:
+        TORSO:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -627,7 +627,7 @@ Visualization Manager:
       Name: Current View
       Near Clip Distance: 0.009999999776482582
       Scale: 71.72926330566406
-      Target Frame: base_link
+      Target Frame: TORSO
       Value: TopDownOrtho (rviz_default_plugins)
       X: 0.4037398099899292
       Y: 0.7326793670654297

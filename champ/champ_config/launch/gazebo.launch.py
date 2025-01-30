@@ -19,7 +19,7 @@ def generate_launch_description():
 
     use_sim_time = LaunchConfiguration("use_sim_time")
     description_path = LaunchConfiguration("description_path")
-    base_frame = "base_link"
+    base_frame = "TORSO"
 
     config_pkg_share = launch_ros.substitutions.FindPackageShare(
         package="champ_config"

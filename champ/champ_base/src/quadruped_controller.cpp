@@ -134,9 +134,9 @@ void QuadrupedController::controlLoop_()
 
 void QuadrupedController::cmdVelCallback_(const geometry_msgs::msg::Twist::SharedPtr msg)
 {
-    req_vel_.linear.x = msg->linear.x;
-    req_vel_.linear.y = msg->linear.y;
-    req_vel_.angular.z = msg->angular.z;
+    req_vel_.linear.x = -(msg->linear.x);
+    req_vel_.linear.y = -(msg->linear.y);
+    req_vel_.angular.z = -(msg->angular.z);
 }
 
 void QuadrupedController::cmdPoseCallback_(const geometry_msgs::msg::Pose::SharedPtr msg)

@@ -23,8 +23,12 @@ from launch_ros.substitutions import FindPackageShare
 def generate_launch_description():
     this_package = FindPackageShare('champ_config')
 
-    default_params_file_path = PathJoinSubstitution(
+    default_slam_params_file_path = PathJoinSubstitution(
         [this_package, 'config/autonomy', 'slam.yaml']
+    )
+
+    default_navigation_params_file_path = PathJoinSubstitution(
+        [this_package, 'config/autonomy', 'navigation.yaml']
     )
 
     slam_launch_path = PathJoinSubstitution(
@@ -34,13 +38,13 @@ def generate_launch_description():
     return LaunchDescription([
         DeclareLaunchArgument(
             name='slam_params_file',
-            default_value=default_params_file_path,
+            default_value=default_slam_params_file_path,
             description='Navigation2 slam params file'
         ),
 
         DeclareLaunchArgument(
             name='sim', 
-            default_value='false',
+            default_value='true',
             description='Enable use_sime_time to true'
         ),
 
@@ -50,10 +54,17 @@ def generate_launch_description():
             description='Run rviz'
         ),
 
+        DeclareLaunchArgument(
+            name='navigation_params_file',
+            default_value=default_navigation_params_file_path,
+            description='Navigation2 navigation params file'
+        ),
+
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(slam_launch_path),
             launch_arguments={
                 'slam_params_file': LaunchConfiguration("slam_params_file"),
+                'navigation_params_file': LaunchConfiguration("navigation_params_file"),
                 'sim': LaunchConfiguration("sim"),
                 'rviz': LaunchConfiguration("rviz")
             }.items()

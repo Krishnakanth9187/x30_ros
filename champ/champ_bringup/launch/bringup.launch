@@ -1,6 +1,6 @@
 <launch>
     <arg name="robot_name"             default="/" />
-    <arg name="base_frame"             default="base_link" />
+    <arg name="base_frame"             default="TORSO" />
     <arg name="joints_map_file"        default="$(find champ_config)/config/joints/joints.yaml"/>
     <arg name="links_map_file"         default="$(find champ_config)/config/links/links.yaml"/>
     <arg name="gait_config_file"       default="$(find champ_config)/config/gait/gait.yaml"/>
