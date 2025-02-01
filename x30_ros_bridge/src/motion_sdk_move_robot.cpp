@@ -27,97 +27,110 @@ MotionSDKMoveRobot::MotionSDKMoveRobot() : rclcpp::Node("motion_sdk_move_robot")
     joint_trajectory_subscriber_ = this->create_subscription<trajectory_msgs::msg::JointTrajectory>(
         "/joint_group_effort_controller/joint_trajectory", 10,
         std::bind(&MotionSDKMoveRobot::jointTrajectoryCallback, this, std::placeholders::_1));
-    
-    RCLCPP_INFO(this->get_logger(), "MotionSDKMoveRobot Node Initialized");
+
+        joint_state_publisher_ = this->create_publisher<sensor_msgs::msg::JointState>("/joint_states", 10);
+
+        robot_data_rec = new ParseCommand;
+
+        robot_data_rec->RegisterCallBack(std::bind(&MotionSDKMoveRobot::OnMessageUpdate, this, std::placeholders::_1));
+
+        timer_ = this->create_wall_timer(std::chrono::milliseconds(100), 
+                                         std::bind(&MotionSDKMoveRobot::publishJointStates, this));
+
+        RCLCPP_INFO(this->get_logger(), "MotionSDKMoveRobot Node Initialized");
 }
 
 void MotionSDKMoveRobot::jointTrajectoryCallback(const trajectory_msgs::msg::JointTrajectory::SharedPtr msg) {
     RCLCPP_INFO(this->get_logger(), "Received JointTrajectory message with %zu points", msg->points.size());
-    // Process the received trajectory message
-}
-
-
-/**
- * @brief Spend 1 s putting the robot's legs away and preparing to stand
- * @param cmd Issue control command
- * @param time Current timestamp
- * @param data_state Real-time status data of robot
- */
-void MotionSDKMoveRobot::PreStandUp(RobotCmdSDK &cmd, double time,RobotDataSDK &data_state) {
-  double standup_time = 1.0;
-  double cycle_time = 0.001;
-  double goal_angle_fl[] = {0*kDegree2Radian, -70*kDegree2Radian, 150*kDegree2Radian};
-  double goal_angle_fr[] = {0*kDegree2Radian, -70*kDegree2Radian, 150*kDegree2Radian};
-  double goal_angle_hl[] = {0*kDegree2Radian, -70*kDegree2Radian, 150*kDegree2Radian};
-  double goal_angle_hr[] = {0*kDegree2Radian, -70*kDegree2Radian, 150*kDegree2Radian};
-
-  if (time <= init_time + standup_time) {
-    SwingToAngle(init_angle_fl, goal_angle_fl, standup_time, time - init_time, cycle_time, "FL", cmd, data_state);
-    SwingToAngle(init_angle_fr, goal_angle_fr, standup_time, time - init_time, cycle_time, "FR", cmd,data_state);
-    SwingToAngle(init_angle_hl, goal_angle_hl, standup_time, time - init_time, cycle_time, "HL", cmd,data_state);
-    SwingToAngle(init_angle_hr, goal_angle_hr, standup_time, time - init_time, cycle_time, "HR", cmd,data_state);
-  }
-}
-
-/**
- * @brief Spend 1.5s standing
- * @param cmd Issue control command
- * @param time Current timestamp
- * @param data_state Real-time status data of robot
- */
-void MotionSDKMoveRobot::StandUp(RobotCmdSDK &cmd, double time,RobotDataSDK &data_state) {
-  double standup_time = 1.5;
-  double cycle_time = 0.001;
-  double goal_angle_fl[] = {0*kDegree2Radian, -42*kDegree2Radian, 78*kDegree2Radian};
-  double goal_angle_fr[] = {0*kDegree2Radian, -42*kDegree2Radian, 78*kDegree2Radian};
-  double goal_angle_hl[] = {0*kDegree2Radian, -42*kDegree2Radian, 78*kDegree2Radian};
-  double goal_angle_hr[] = {0*kDegree2Radian, -42*kDegree2Radian, 78*kDegree2Radian};
-
-  if (time <= init_time + standup_time) {
-    SwingToAngle(init_angle_fl, goal_angle_fl, standup_time, time - init_time, cycle_time, "FL", cmd, data_state);
-    SwingToAngle(init_angle_fr, goal_angle_fr, standup_time, time - init_time, cycle_time, "FR", cmd,data_state);
-    SwingToAngle(init_angle_hl, goal_angle_hl, standup_time, time - init_time, cycle_time, "HL", cmd,data_state);
-    SwingToAngle(init_angle_hr, goal_angle_hr, standup_time, time - init_time, cycle_time, "HR", cmd,data_state);
-  }else{
-    for (int i = 0; i < 12; i++) {
-      cmd.joint_cmd[i].tor = 0;
-      cmd.joint_cmd[i].kp = 300.0;
-      cmd.joint_cmd[i].kd = 4.0;
+    
+    if (msg->points.empty()) {
+        RCLCPP_WARN(this->get_logger(), "Received an empty JointTrajectory message");
+        return;
     }
-    for (int i = 0; i < 4; i++) {
-      cmd.joint_cmd[3*i].pos = 0;
-      cmd.joint_cmd[3*i+1].pos = -42 * kDegree2Radian;
-      cmd.joint_cmd[3*i+2].pos = 78 * kDegree2Radian;
-      cmd.joint_cmd[3*i].vel = 0;
-      cmd.joint_cmd[3*i+1].vel = 0;
-      cmd.joint_cmd[3*i+2].vel = 0;
+    
+    const auto& positions = msg->points[0].positions;
+    if (positions.size() != 12) {
+        RCLCPP_ERROR(this->get_logger(), "Expected 12 joint positions but received %zu", positions.size());
+        return;
     }
-  }
+    
+    RobotCmdSDK cmd;
+
+    double final_angles[3];
+    double total_time = 1.0; 
+    double run_time = 0.0;
+    double cycle_time = 0.01; 
+
+    std::vector<std::string> leg_sides = {"FL", "FR", "HL", "HR"};
+
+    double* init_angles[4] = {init_angle_fl, init_angle_fr, init_angle_hl, init_angle_hr};
+
+    RobotDataSDK& data = robot_data_rec->getRecvState();
+
+    for (size_t i = 0; i < leg_sides.size(); i++) {
+        final_angles[0] = positions[i * 3];
+        final_angles[1] = positions[i * 3 + 1];
+        final_angles[2] = positions[i * 3 + 2];
+
+        SwingToAngle(init_angles[i], final_angles, total_time, run_time, cycle_time, leg_sides[i], cmd, data);
+    }
 }
+
+
  /**
   * @brief Only the current moment and angle are recorded
   * @param data Current joint data
   * @param time Current timestamp
   */
-void MotionSDKMoveRobot::GetInitData(RobotDataSDK data, double time) {
-  init_time = time;
-  // Only the current moment and angle are recorded
-  init_angle_fl[0] = data.fl_leg[0].pos;
-  init_angle_fl[1] = data.fl_leg[1].pos;
-  init_angle_fl[2] = data.fl_leg[2].pos;
+void MotionSDKMoveRobot::OnMessageUpdate(uint32_t code) {
+        if (code == 0x0906) {
+            is_message_updated_ = true;
+        }
+    }
 
-  init_angle_fr[0] = data.fr_leg[0].pos;
-  init_angle_fr[1] = data.fr_leg[1].pos;
-  init_angle_fr[2] = data.fr_leg[2].pos;
+// Publish joint states if new data is available
+void MotionSDKMoveRobot::publishJointStates() {
+    if (!is_message_updated_) return;
 
-  init_angle_hl[0] = data.hl_leg[0].pos;
-  init_angle_hl[1] = data.hl_leg[1].pos;
-  init_angle_hl[2] = data.hl_leg[2].pos;
+    RobotDataSDK* robot_data = &robot_data_rec->getRecvState();
 
-  init_angle_hr[0] = data.hr_leg[0].pos;
-  init_angle_hr[1] = data.hr_leg[1].pos;
-  init_angle_hr[2] = data.hr_leg[2].pos;
+      init_angle_fl[0] = robot_data->fl_leg[0].pos;
+      init_angle_fl[1] = robot_data->fl_leg[1].pos;
+      init_angle_fl[2] = robot_data->fl_leg[2].pos;
+
+      init_angle_fr[0] = robot_data->fr_leg[0].pos;
+      init_angle_fr[1] = robot_data->fr_leg[1].pos;
+      init_angle_fr[2] = robot_data->fr_leg[2].pos;
+
+      init_angle_hl[0] = robot_data->hl_leg[0].pos;
+      init_angle_hl[1] = robot_data->hl_leg[1].pos;
+      init_angle_hl[2] = robot_data->hl_leg[2].pos;
+
+      init_angle_hr[0] = robot_data->hr_leg[0].pos;
+      init_angle_hr[1] = robot_data->hr_leg[1].pos;
+      init_angle_hr[2] = robot_data->hr_leg[2].pos;
+
+    sensor_msgs::msg::JointState joint_state_msg;
+    joint_state_msg.header.stamp = this->get_clock()->now();
+
+    joint_state_msg.name = {"fl_leg_1", "fl_leg_2", "fl_leg_3",
+                            "fr_leg_1", "fr_leg_2", "fr_leg_3",
+                            "hl_leg_1", "hl_leg_2", "hl_leg_3",
+                            "hr_leg_1", "hr_leg_2", "hr_leg_3"};
+
+    joint_state_msg.position = {robot_data->fl_leg[0].pos, robot_data->fl_leg[1].pos, robot_data->fl_leg[2].pos,
+                                robot_data->fr_leg[0].pos, robot_data->fr_leg[1].pos, robot_data->fr_leg[2].pos,
+                                robot_data->hl_leg[0].pos, robot_data->hl_leg[1].pos, robot_data->hl_leg[2].pos,
+                                robot_data->hr_leg[0].pos, robot_data->hr_leg[1].pos, robot_data->hr_leg[2].pos};
+
+
+    // Publish joint state message
+    joint_state_publisher_->publish(joint_state_msg);
+
+    // Reset flag
+    is_message_updated_ = false;
 }
+
 
 /**
  * @brief Specifically achieve swinging one leg of the robot to a specified position within a specified time
@@ -151,12 +164,12 @@ void MotionSDKMoveRobot::SwingToAngle(double initial_angle[3], double final_angl
     leg_side = 3;
   else
     cout << "Leg Side Error!!!" << endl;
-
+   
   for (int j = 0; j < 3; j++) {
     CubicSpline(initial_angle[j], 0, (double)final_angle[j], 0, run_time,
                 cycle_time, total_time, goal_angle[j], goal_angle_next[j],
                 goal_angle_next2[j]);
-    goal_vel[j] = (goal_angle_next[j] - goal_angle[j]) / cycle_time;            
+    goal_vel[j] = (goal_angle_next[j] - goal_angle[j]) / cycle_time;       
   }
 
 

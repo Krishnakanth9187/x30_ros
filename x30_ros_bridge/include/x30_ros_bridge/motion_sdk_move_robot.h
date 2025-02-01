@@ -1,5 +1,6 @@
 #include "rclcpp/rclcpp.hpp"
 #include "trajectory_msgs/msg/joint_trajectory.hpp"
+#include <sensor_msgs/msg/joint_state.hpp>
 #include "x30_ros_bridge/command_list.h"
 #include "x30_ros_bridge/parse_cmd.h"
 #include <time.h>
@@ -14,6 +15,10 @@ const double kDegree2Radian = 3.1415926 / 180;
 class MotionSDKMoveRobot: public rclcpp::Node{
   private:
     rclcpp::Subscription<trajectory_msgs::msg::JointTrajectory>::SharedPtr joint_trajectory_subscriber_;
+    rclcpp::Publisher<sensor_msgs::msg::JointState>::SharedPtr joint_state_publisher_;
+    rclcpp::TimerBase::SharedPtr timer_;
+    ParseCommand* robot_data_rec;
+    bool is_message_updated_ = false;
     
     void jointTrajectoryCallback(const trajectory_msgs::msg::JointTrajectory::SharedPtr msg);
 
@@ -29,6 +34,9 @@ class MotionSDKMoveRobot: public rclcpp::Node{
      * @param data_state Real-time status data of robot
      */
     void PreStandUp(RobotCmdSDK &cmd, double time,RobotDataSDK &data_state);
+
+    void publishJointStates();
+    void OnMessageUpdate(uint32_t code);
     
     /**
      * @brief Spend 1.5s standing
@@ -71,6 +79,5 @@ class MotionSDKMoveRobot: public rclcpp::Node{
     * @param data Current joint data
     * @param time Current timestamp
     */
-    void GetInitData(RobotDataSDK data, double time);
 };
 
