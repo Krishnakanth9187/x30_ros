@@ -1,0 +1,6 @@
+Ptz ptz
+---
+bool success
+string message
+---
+Ptz ptz_remaining

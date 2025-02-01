@@ -32,12 +32,12 @@
     </collision>
   </link>
 
-    <!-- <xacro:axis_q62
-      prefix="payload_camera"
-      parent="TORSO"
-      topic="payload/camera/image_raw">
-      <origin xyz="0 0 0.2" rpy="0 0 0" />
-    </xacro:axis_q62> -->
+  <xacro:axis_q62
+    prefix="payload_camera"
+    parent="TORSO"
+    topic="payload/camera/image_raw">
+    <origin xyz="0 0 0.2" rpy="0 0 0" />
+  </xacro:axis_q62>
 
 
   <xacro:imu_sensor xyz="0.0 0.0 0.09" rpy="0 0 0" parent="TORSO" />

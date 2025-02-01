@@ -1,0 +1,12 @@
+# A frame ID we want to point the camera at
+string frame_id
+
+# The zoom level we want
+float32 zoom
+---
+bool success
+string message
+---
+float32 pan_remaining
+float32 tilt_remaining
+float32 zoom_remaining

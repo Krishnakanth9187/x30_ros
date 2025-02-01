@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>axis_camera</name>
+  <version>2.0.3</version>
+  <description>ROS 2 driver for fixed and PTZ Axis cameras</description>
+  <maintainer email="civerachb@clearpathrobotics.com">Chris Iverach-Brereton</maintainer>
+  <license>BSD</license>
+
+  <url type="website">http://ros.org/wiki/axis_camera</url>
+  <url type="repository">https://github.com/ros-drivers/axis_camera</url>
+  <url type="bugtracker">https://github.com/ros-drivers/axis_camera/issues</url>
+
+  <author email="civerachb@clearpathrobotics.com">Chris Iverach-Brereton</author>
+  <author email="mhosmar@clearpathrobotics.com">Mike Hosmar</author>
+  <author email="quentin.picard@vedecom.fr">Quentin Picard</author>
+
+  <test_depend>ament_copyright</test_depend>
+  <test_depend>ament_flake8</test_depend>
+  <test_depend>ament_pep257</test_depend>
+  <test_depend>python3-pytest</test_depend>
+
+  <exec_depend>axis_msgs</exec_depend>
+  <exec_depend>camera_info_manager_py</exec_depend>
+  <exec_depend>ptz_action_server_msgs</exec_depend>
+  <exec_depend>python3-requests</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>std_srvs</exec_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>

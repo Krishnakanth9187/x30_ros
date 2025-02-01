@@ -1,0 +1,24 @@
+{
+    "python.autoComplete.extraPaths": [
+        "/home/krishnakanth/botcraft_ws/install/teleop_twist_keyboard/lib/python3.10/site-packages",
+        "/home/krishnakanth/botcraft_ws/install/axis_camera/lib/python3.10/site-packages",
+        "/home/krishnakanth/botcraft_ws/install/ptz_action_server_msgs/local/lib/python3.10/dist-packages",
+        "/home/krishnakanth/botcraft_ws/install/champ_bringup/local/lib/python3.10/dist-packages",
+        "/home/krishnakanth/botcraft_ws/install/champ_msgs/local/lib/python3.10/dist-packages",
+        "/home/krishnakanth/botcraft_ws/install/camera_info_manager_py/lib/python3.10/site-packages",
+        "/home/krishnakanth/botcraft_ws/install/axis_msgs/local/lib/python3.10/dist-packages",
+        "/opt/ros/humble/lib/python3.10/site-packages",
+        "/opt/ros/humble/local/lib/python3.10/dist-packages"
+    ],
+    "python.analysis.extraPaths": [
+        "/home/krishnakanth/botcraft_ws/install/teleop_twist_keyboard/lib/python3.10/site-packages",
+        "/home/krishnakanth/botcraft_ws/install/axis_camera/lib/python3.10/site-packages",
+        "/home/krishnakanth/botcraft_ws/install/ptz_action_server_msgs/local/lib/python3.10/dist-packages",
+        "/home/krishnakanth/botcraft_ws/install/champ_bringup/local/lib/python3.10/dist-packages",
+        "/home/krishnakanth/botcraft_ws/install/champ_msgs/local/lib/python3.10/dist-packages",
+        "/home/krishnakanth/botcraft_ws/install/camera_info_manager_py/lib/python3.10/site-packages",
+        "/home/krishnakanth/botcraft_ws/install/axis_msgs/local/lib/python3.10/dist-packages",
+        "/opt/ros/humble/lib/python3.10/site-packages",
+        "/opt/ros/humble/local/lib/python3.10/dist-packages"
+    ]
+}

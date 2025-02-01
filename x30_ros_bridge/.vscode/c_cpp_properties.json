@@ -1,0 +1,30 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "${default}",
+        "limitSymbolsToIncludedHeaders": false
+      },
+      "includePath": [
+        "/home/krishnakanth/botcraft_ws/install/ptz_action_server_msgs/include/**",
+        "/home/krishnakanth/botcraft_ws/install/champ_msgs/include/**",
+        "/home/krishnakanth/botcraft_ws/install/champ/include/**",
+        "/opt/ros/humble/include/**",
+        "/home/krishnakanth/botcraft_ws/src/champ/champ/include/**",
+        "/home/krishnakanth/botcraft_ws/src/champ/champ_base/include/**",
+        "/home/krishnakanth/botcraft_ws/src/champ/champ_config/include/**",
+        "/home/krishnakanth/botcraft_ws/src/realsense_gazebo_plugin/include/**",
+        "/home/krishnakanth/botcraft_ws/src/x30_description/include/**",
+        "/home/krishnakanth/botcraft_ws/src/x30_motion_sdk/include/**",
+        "/home/krishnakanth/botcraft_ws/src/x30_ros_bridge/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS",
+      "intelliSenseMode": "gcc-x64",
+      "compilerPath": "/usr/bin/gcc",
+      "cStandard": "gnu11",
+      "cppStandard": "c++14"
+    }
+  ],
+  "version": 4
+}

@@ -1,0 +1,12 @@
+Ptz ptz
+
+# A frame ID that we calculate the pan & tilt relative to
+# If blank the link ID is ignored and we treat this request as a normal PtzAction
+string frame_id
+---
+bool success
+string message
+---
+float32 pan_remaining
+float32 tilt_remaining
+float32 zoom_remaining

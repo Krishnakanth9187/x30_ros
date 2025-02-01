@@ -143,6 +143,12 @@ def generate_launch_description():
              'joint_group_effort_controller'],
         output='screen'
     )
+
+    load_pan_tilt_velocity_controller = ExecuteProcess(
+        cmd=['ros2', 'control', 'load_controller', '--set-state', 'active',
+             'pan_tilt_velocity_controller'],
+        output='screen'
+    )
     
     # joint_group_position_controller
     return LaunchDescription(
@@ -166,6 +172,7 @@ def generate_launch_description():
             load_joint_state_controller,
             # load_joint_trajectory_position_controller
             load_joint_trajectory_effort_controller,
+            load_pan_tilt_velocity_controller,
             contact_sensor
         ]
     )
