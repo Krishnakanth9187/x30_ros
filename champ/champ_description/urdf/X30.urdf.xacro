@@ -80,9 +80,9 @@
     <origin xyz="0.291 0.08 0" rpy="0 0 0" />
     <parent link="TORSO" />
     <child link="FL_HIP" />
-    <axis xyz="-1 0 0" />
+    <axis xyz="1 0 0" />
     <dynamics damping="0.01" friction="0.03"/>
-    <limit lower="-0.323" upper="0.585" effort="84" velocity="17.5" />
+    <limit lower="-0.585" upper="0.323" effort="84" velocity="17.5" />
   </joint>
 
   <ros2_control name="FL_HIP" type="system">
@@ -120,9 +120,9 @@
     <origin xyz="0 0.11675 0" rpy="0 0 0" />
     <parent link="FL_HIP" />
     <child link="FL_THIGH" />
-    <axis xyz="0 -1 0" />
+    <axis xyz="0 1 0" />
     <dynamics damping="0.01" friction="0.03"/>
-    <limit lower="-2.967" upper="0.262" effort="84" velocity="17.5" />
+    <limit lower="-0.262" upper="2.967" effort="84" velocity="17.5" />
   </joint>
 
   <ros2_control name="FL_THIGH" type="system">
@@ -172,9 +172,9 @@
     <origin xyz="0 0 -0.30" rpy="0 0 0" />
     <parent link="FL_THIGH" />
     <child link="FL_SHANK" />
-    <axis xyz="0 -1 0" />
+    <axis xyz="0 1 0" />
     <dynamics damping="0.01" friction="0.03"/>
-    <limit lower="0.349" upper="2.531" effort="180" velocity="16.1" />
+    <limit lower="-2.531" upper="-0.349" effort="180" velocity="16.1" />
   </joint>
 
   <ros2_control name="FL_SHANK" type="system">
@@ -237,9 +237,9 @@
     <origin xyz="0.291 -0.08 0" rpy="0 0 0" />
     <parent link="TORSO" />
     <child link="FR_HIP" />
-    <axis xyz="-1 0 0" />
+    <axis xyz="1 0 0" />
     <dynamics damping="0.01" friction="0.03"/>
-    <limit lower="-0.585" upper="0.323" effort="84" velocity="17.5" />
+    <limit lower="-0.323" upper="0.585" effort="84" velocity="17.5" />
   </joint>
 
   <ros2_control name="FR_HIP" type="system">
@@ -277,9 +277,9 @@
     <origin xyz="0 -0.11675 0" rpy="0 0 0" />
     <parent link="FR_HIP" />
     <child link="FR_THIGH" />
-    <axis xyz="0 -1 0" />
+    <axis xyz="0 1 0" />
     <dynamics damping="0.01" friction="0.03"/>
-    <limit lower="-2.967" upper="0.262" effort="84" velocity="17.5" />
+    <limit lower="-0.262" upper="2.967" effort="84" velocity="17.5" />
   </joint>
 
   <ros2_control name="FR_THIGH" type="system">
@@ -329,9 +329,9 @@
     <origin xyz="0 0 -0.30" rpy="0 0 0" />
     <parent link="FR_THIGH" />
     <child link="FR_SHANK" />
-    <axis xyz="0 -1 0" />
+    <axis xyz="0 1 0" />
     <dynamics damping="0.01" friction="0.03"/>
-    <limit lower="0.349" upper="2.531" effort="180" velocity="16.1" />
+    <limit lower="-2.531" upper="-0.349" effort="180" velocity="16.1" />
   </joint>
 
   <ros2_control name="FR_SHANK" type="system">
@@ -393,9 +393,9 @@
     <origin xyz="-0.291 0.08 0" rpy="0 0 0" />
     <parent link="TORSO" />
     <child link="HL_HIP" />
-    <axis xyz="-1 0 0" />
+    <axis xyz="1 0 0" />
     <dynamics damping="0.01" friction="0.03"/>
-    <limit lower="-0.323" upper="0.585" effort="84" velocity="17.5" />
+    <limit lower="-0.585" upper="0.323" effort="84" velocity="17.5" />
   </joint>
 
   <ros2_control name="HL_HIP" type="system">
@@ -433,9 +433,9 @@
     <origin xyz="0 0.11675 0" rpy="0 0 0" />
     <parent link="HL_HIP" />
     <child link="HL_THIGH" />
-    <axis xyz="0 -1 0" />
+    <axis xyz="0 1 0" />
     <dynamics damping="0.01" friction="0.03"/>
-    <limit lower="-2.967" upper="0.262" effort="84" velocity="17.5" />
+    <limit lower="-0.262" upper="2.967" effort="84" velocity="17.5" />
   </joint>
 
   <ros2_control name="HL_THIGH" type="system">
@@ -485,9 +485,9 @@
     <origin xyz="0 0 -0.30" rpy="0 0 0" />
     <parent link="HL_THIGH" />
     <child link="HL_SHANK" />
-    <axis xyz="0 -1 0" />
+    <axis xyz="0 1 0" />
     <dynamics damping="0.01" friction="0.03"/>
-    <limit lower="0.349" upper="2.531" effort="180" velocity="16.1" />
+    <limit lower="-2.531" upper="-0.349" effort="180" velocity="16.1" />
   </joint>
 
   <ros2_control name="HL_SHANK" type="system">
@@ -548,9 +548,9 @@
     <origin xyz="-0.291 -0.08 0" rpy="0 0 0" />
     <parent link="TORSO" />
     <child link="HR_HIP" />
-    <axis xyz="-1 0 0" />
+    <axis xyz="1 0 0" />
     <dynamics damping="0.01" friction="0.03"/>
-    <limit lower="-0.585" upper="0.323" effort="84" velocity="17.5" />
+    <limit lower="-0.323" upper="0.585" effort="84" velocity="17.5" />
   </joint>
 
   <ros2_control name="HR_HIP" type="system">
@@ -588,9 +588,9 @@
     <origin xyz="0 -0.11675 0" rpy="0 0 0" />
     <parent link="HR_HIP" />
     <child link="HR_THIGH" />
-    <axis xyz="0 -1 0" />
+    <axis xyz="0 1 0" />
     <dynamics damping="0.01" friction="0.03"/>
-    <limit lower="-2.967" upper="0.262" effort="84" velocity="17.5" />
+    <limit lower="-0.262" upper="2.967" effort="84" velocity="17.5" />
   </joint>
 
   <ros2_control name="HR_THIGH" type="system">
@@ -640,9 +640,9 @@
     <origin xyz="0 0 -0.30" rpy="0 0 0" />
     <parent link="HR_THIGH" />
     <child link="HR_SHANK" />
-    <axis xyz="0 -1 0" />
+    <axis xyz="0 1 0" />
     <dynamics damping="0.01" friction="0.03"/>
-    <limit lower="0.349" upper="2.531" effort="180" velocity="16.1" />
+    <limit lower="-2.531" upper="-0.349" effort="180" velocity="16.1" />
   </joint>
 
   <ros2_control name="HR_SHANK" type="system">

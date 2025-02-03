@@ -41,7 +41,7 @@ MotionSDKMoveRobot::MotionSDKMoveRobot() : rclcpp::Node("motion_sdk_move_robot")
 }
 
 void MotionSDKMoveRobot::jointTrajectoryCallback(const trajectory_msgs::msg::JointTrajectory::SharedPtr msg) {
-    RCLCPP_INFO(this->get_logger(), "Received JointTrajectory message with %zu points", msg->points.size());
+    // RCLCPP_INFO(this->get_logger(), "Received JointTrajectory message with %zu points", msg->points.size());
     
     if (msg->points.empty()) {
         RCLCPP_WARN(this->get_logger(), "Received an empty JointTrajectory message");

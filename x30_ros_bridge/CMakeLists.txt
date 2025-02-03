@@ -33,6 +33,7 @@ set(SOURCE_FILES
 # Create executable
 add_executable(${PROJECT_NAME}_node ${SOURCE_FILES})
 ament_target_dependencies(${PROJECT_NAME}_node rclcpp std_msgs geometry_msgs sensor_msgs Boost trajectory_msgs)
+# target_link_libraries(${PROJECT_NAME}_node deeprobotics_${ROBOT_NAME}_motion_sdk_${CMAKE_SYSTEM_PROCESSOR})
 
 # Install targets
 install(TARGETS

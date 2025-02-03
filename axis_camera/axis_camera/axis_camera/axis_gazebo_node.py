@@ -36,17 +36,15 @@ class AxisPTZ(Node):
 
     def cmd_vel_callback(self, msg):
         """Extract pan and tilt velocities from /cmd_vel message."""
-        self.desired_pan_vel = msg.pan # Assuming Z-axis rotation controls pan
-        self.desired_tilt_vel = msg.tilt  # Assuming Y-axis rotation controls tilt
+        self.desired_pan_vel = msg.pan 
+        self.desired_tilt_vel = msg.tilt 
 
-        # Publish to pan-tilt velocity controller
         velocity_msg = Float64MultiArray()
         velocity_msg.data = [self.desired_pan_vel, self.desired_tilt_vel]
         self.pub_pan_tilt_velocity.publish(velocity_msg)
 
         self.get_logger().info(f"Published Pan/Tilt Velocities: {velocity_msg.data}")
 
-        # Update last command time
         self.last_command_time = self.get_clock().now()
 
     def joint_state_callback(self, msg):
@@ -59,7 +57,7 @@ class AxisPTZ(Node):
                 self.pan_angle = msg.position[pan_index]
                 self.tilt_angle = msg.position[tilt_index]
 
-                self.get_logger().info(f"Pan Angle: {self.pan_angle:.2f}, Tilt Angle: {self.tilt_angle:.2f}")
+                # self.get_logger().info(f"Pan Angle: {self.pan_angle:.2f}, Tilt Angle: {self.tilt_angle:.2f}")
 
         except ValueError:
             self.get_logger().warn("Pan/Tilt joints not found in joint_states")
