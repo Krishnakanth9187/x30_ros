@@ -17,7 +17,8 @@ jobs:
         run: source /opt/ros/humble/setup.bash
 
       - name: Build and Deploy
-        run: |     
+        run: | 
+          source /opt/ros/humble/setup.bash    
           pip3 install catkin_pkg
           pip3 install empy==3.3.4
           pip3 install lark
