@@ -18,11 +18,11 @@ jobs:
 
       - name: Build and Deploy
         run: |
+          conda deactivate
           pip3 install catkin_pkg
           pip3 install empy==3.3.4
           pip3 install lark
           export WORKSPACE_DIR=$HOME/strider_ws
-          conda deactivate
           mkdir -p $WORKSPACE_DIR/src
           rsync -a --exclude=$WORKSPACE_DIR --exclude=.git ./ $WORKSPACE_DIR/src/
           cd $WORKSPACE_DIR
